@@ -1,0 +1,32 @@
+{% extends "mainApp/wrapper.html" %}
+
+{% block content %}
+{% if request.user.is_authenticated %}
+<div >
+    <a href="/news/edit-page">Мои Статьи</a>
+</div>
+{% endif %}
+
+<div class="row">
+
+    {% for i in object_list %}
+    <hr>
+        <div class="col">
+            <a href="/news/{{i.id}}"><h5>{{i.title}}</h5></a>
+                <h6>{{i.date|date:"d-m-Y"}}</h6>
+                {% if i.image_p %}
+                    <img src="{{MEDIA_URL}}{{i.image_p.url}}" height="300" width="300">
+                {% endif %}
+        </div>
+    {% if forloop.counter|divisibleby:"2" %}
+    <div class="col"></div>
+    {% endif %}
+
+
+
+    {% endfor %}
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "mainApp/wrapper.html" %}
+
+{% block content %}
+    <h2 class="text-info">{{get_article.title}}</h2>
+    <h6 class="text-info">Опубликовано: {{get_article.date|date:"Y-m-d в H:i:s"}}</h6>
+    <p>{{get_article.post|safe|linebreaks}}</p>
+{% if get_article.image_p %}
+    <p>Изображение {{articles.image_p.path}}</p>
+    <img src="{{MEDIA_URL}}{{get_article.image_p.url}}">
+{% endif %}
+    <p>Комментарии {{get_article.comments_articles.all.count}}</p>
+
+    <hr>
+
+<ul>
+{% for i in get_article.comments_articles.all %}
+<li>
+    Дата добавления: {{i.create_date}}<br>
+    Автор Комментария: {{i.author}}<br><br>
+
+    {{i.text}}
+</li>
+{% endfor %}
+</ul>
+
+    <p>Добавить комментарий</p>
+
+{% if messages %}
+    <div class="alert alert-success">
+        {% for i in messages %}
+            {{i}}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+<div class="col-4">
+
+        <form action=""  id="add_form" method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+        </form>
+
+        <button form="add_form" type="submit" class="btn btn-primary">Добавить</button>
+
+</div>
+{% endblock %}
