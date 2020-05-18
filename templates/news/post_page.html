@@ -23,7 +23,7 @@
 {% endfor %}
 </ul>
 
-    <p>Добавить комментарий</p>
+
 
 {% if messages %}
     <div class="alert alert-success">
@@ -33,9 +33,9 @@
     </div>
     {% endif %}
 
-
+{% if request.user.is_authenticated %}
 <div class="col-4">
-
+    <p>Добавить комментарий</p>
         <form action=""  id="add_form" method="post">
             {% csrf_token %}
             {{form.as_p}}
@@ -44,4 +44,7 @@
         <button form="add_form" type="submit" class="btn btn-primary">Добавить</button>
 
 </div>
+    {% else %}
+<p>Комментарии могут оставить только зарегистрированные пользователи</p>
+ {% endif %}
 {% endblock %}
