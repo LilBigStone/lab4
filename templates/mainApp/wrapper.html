@@ -22,20 +22,22 @@
                <div class="col-md-3" ><a href="/" class="btn btn-primary btn-lg " style="background: #5385bb">Главная</a></div>
                <div class="col-md-2" ><a href="/news" class="btn btn-primary btn-lg " style="background: #5385bb" >Новости</a></div>
                {% if request.user.is_authenticated %}
+
+                <div class="col-md-2"><h4 style="color: #fefefe"> Добро Пожаловать {{request.user}} </h4></div>
                 <div class="col-md-2" >{% url 'logout_page' as url_logout_page %}<a href="{{url_logout_page}}" class="btn btn-danger btn-lg"  >Выйти</a></div>
 
                {% else %}
-
+                <div class="col-md-3"></div>
                <div class="col-md-2" >{% url 'login_page' as url_login_page %}<a href="{{url_login_page}}" class="btn btn-success btn-lg"  >Авторизация</a></div>
 
 
-               <div class="col-md-2" >{% url 'register_page' as url_register_page %}<a href="{{url_register_page}}" class="btn btn-primary btn-lg"  >Регистрация</a></div>
+               <div class="col-md-1" >{% url 'register_page' as url_register_page %}<a href="{{url_register_page}}" class="btn btn-primary btn-lg"  >Регистрация</a></div>
 
 
                {% endif %}
 
            </div>
-<div class="col-md-1"> {{request.user}}</div>
+
        </div>
     {% block content %}
 
