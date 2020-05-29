@@ -1,6 +1,8 @@
 {% extends "mainApp/wrapper.html" %}
 
 {% block content %}
+<title>{{get_article.title}}</title>
+
     <h2 class="text-info">{{get_article.title}}</h2>
     <h6 class="text-info">Опубликовано: {{get_article.date|date:"Y-m-d в H:i:s"}}</h6>
     <p>{{get_article.post|safe|linebreaks}}</p>
@@ -14,12 +16,15 @@
 
 <ul>
 {% for i in get_article.comments_articles.all %}
+
 <li>
-    Дата добавления: {{i.create_date}}<br>
-    Автор Комментария: {{i.author}}<br><br>
+    {{i.create_date}}<br>
+    <img src="{{MEDIA_URL}}{{i.author.profile.profile_avatar.url}}" height="40" width="40">
+    <a href="/news/profile_page/{{i.author.profile.id}}/">{{i.author}}</a><br><br>
 
     {{i.text}}
 </li>
+    <hr>
 {% endfor %}
 </ul>
 

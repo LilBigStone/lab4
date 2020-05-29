@@ -4,4 +4,3 @@ from django.contrib.auth.models import User
 from .models import Articles
 
 admin.site.register(Articles)
-

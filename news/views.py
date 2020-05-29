@@ -1,11 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
-from .models import Articles
+from .models import Articles,Profile
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.edit import FormMixin
-from .forms import ArticleForm, AuthUserForm, RegisterUserForm, CommentForm
+from .forms import ArticleForm, AuthUserForm, RegisterUserForm, CommentForm, UserForm, ProfileForm
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.models import User
@@ -77,10 +79,9 @@ class ArticleCreateView(LoginRequiredMixin, CustomSuccessMessageMixin, CreateVie
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
-        # 123123
+
         self.object = form.save(commit=False)
         self.object.author = self.request.user
-
         self.object.save()
         return super().form_valid(form)
 
@@ -121,6 +122,7 @@ class ArticleDeleteView(LoginRequiredMixin,DeleteView):
         self.object.delete()
         return HttpResponseRedirect(success_url)
 
+
 class FishingLoginView(LoginView):
     template_name = 'news/login.html'
     form_class = AuthUserForm
@@ -148,4 +150,38 @@ class FishingRegisterView(CreateView):
 
 class FishingLogoutView(LogoutView):
     next_page = 'news_page'
+
+
+@login_required
+@transaction.atomic
+def update_profile(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, request.FILES, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            if 'profile_avatar' in request.FILES:
+                profile_form.photo = request.FILES['profile_avatar']
+            user_form.save()
+            profile_form.save()
+            messages.success(request, ('Профиль успешно обновлен'))
+
+            return HttpResponseRedirect(reverse_lazy('edit_page'))
+        else:
+            messages.error(request, ('Please correct the error below.'))
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+    return render(request, 'news/profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
+
+
+class ProfileDetailView(DetailView):
+    model = Profile
+    template_name = 'news/profile_page.html'
+    context_object_name = 'get_profile'
+
+    def get_success_url(self):
+        return reverse_lazy('profile', kwargs={'pk': self.get_object().id})
 

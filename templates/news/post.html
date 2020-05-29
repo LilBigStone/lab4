@@ -1,26 +1,45 @@
 {% extends "mainApp/wrapper.html" %}
 
 {% block content %}
+<title>Статьи</title>
 {% if request.user.is_authenticated %}
-<div >
-    <a href="/news/edit-page">Мои Статьи</a>
+<div class="container">
+    <div class="row justify-content-center" >
+        <div class="col-lg-6 align-self-lg-center" style="background-color: #53859b; alignment: center">
+            <a style="color: #fefefe" href="/news/edit-page"><h2 style="text-align: center">Мои Статьи</h2></a>
+        </div>
+    </div>
 </div>
 {% endif %}
-
+<p></p>
 <div class="row">
 
     {% for i in object_list %}
     <hr>
+
+
+        {% if not forloop.counter|divisibleby:"2" %}
+       <div class="col-3"></div>
+        {% endif %}
+
         <div class="col">
-            <a href="/news/{{i.id}}"><h5>{{i.title}}</h5></a>
-                <h6>{{i.date|date:"d-m-Y"}}</h6>
+
+            <a href="/news/{{i.id}}"><h5 style="color: #023a54">{{i.title}}</h5></a>
+                <h6 style="color: #5a6268">{{i.date|date:"d-m-Y"}}</h6>
                 {% if i.image_p %}
-                    <img src="{{MEDIA_URL}}{{i.image_p.url}}" height="300" width="300">
+                    <img src="{{MEDIA_URL}}{{i.image_p.url}}"  height="200" width="300">
                 {% endif %}
+        <p></p>
+            <div class="btn" style="background-color: #53859b;"><a href="/news/{{i.id}}" style="color: #fefefe">Читать дальше></a></div>
+            <hr>
         </div>
-    {% if forloop.counter|divisibleby:"2" %}
-    <div class="col"></div>
-    {% endif %}
+
+
+        {% if forloop.counter|divisibleby:"2" %}
+       <div class="col-3"></div>
+        {% endif %}
+
+
 
 
 

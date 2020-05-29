@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 # from django.views.generic import ListView,DetailView
 from .models import Articles
 from django.views.generic.list import ListView
@@ -16,5 +16,6 @@ urlpatterns = [
     path('login-page/', views.FishingLoginView.as_view(), name='login_page'),
     path('register-page/', views.FishingRegisterView.as_view(), name='register_page'),
     path('logout/', views.FishingLogoutView.as_view(), name='logout_page'),
-
+    path('edit/', views.update_profile, name='profile_edit'),
+    path('profile_page/<int:pk>/', views.ProfileDetailView.as_view(), name='profile')
 ]

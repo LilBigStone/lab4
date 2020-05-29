@@ -1,7 +1,6 @@
 from django import forms
 from django.forms import Textarea
-
-from .models import Articles, Comments
+from .models import Articles, Comments, Profile
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 
@@ -56,3 +55,29 @@ class RegisterUserForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        birth_date = forms.DateField(widget=forms.SelectDateWidget)
+        fields = ('bio', 'location', 'birth_date', 'profile_avatar')
+        widgets = {
+            'birth_date': DateInput()
+        }
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            for i in self.fields:
+                self.fields[i].widget.attrs['class'] = 'form-control'
+
