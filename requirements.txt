@@ -4,6 +4,7 @@ Django==3.0.5
 django-appconf==1.0.4
 django-avatar==5.0.0
 image==1.5.31
+gunicorn==20.0.4
 numpy==1.18.2
 Pillow==7.1.2
 psycopg2==2.8.5
