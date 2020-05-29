@@ -32,6 +32,10 @@ class AuthUserForm(AuthenticationForm, forms.ModelForm):
     class Meta:
         model = User
         fields = ('username', 'password')
+        labels = {
+            'username': "Имя пользователя",
+            'password': "Пароль",
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -43,6 +47,14 @@ class RegisterUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username', 'password')
+        labels = {
+            'username': "Имя пользователя",
+            'password': "Пароль",
+        }
+        help_texts = {
+            'username': None,
+            'password': "Пароль и Имя пользователя не должны быть более 150 символов и могут содержать только цифры, буквы, а также символы: @/./+/-/",
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -61,6 +73,11 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
+        labels = {
+            'first_name': "Имя",
+            'last_name': "Фамилия",
+            'email': "Email адрес",
+        }
 
 
 class DateInput(forms.DateInput):

@@ -7,10 +7,10 @@ from django.dispatch import receiver
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = models.TextField(max_length=500, blank=True)
-    location = models.CharField(max_length=30, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
-    profile_avatar = models.ImageField(null=True, blank=True, upload_to='media/avatar', default='media/avatar/default_img.png')
+    bio = models.TextField(max_length=500, blank=True,verbose_name="Статус")
+    location = models.CharField(max_length=30, blank=True, verbose_name="Местоположение")
+    birth_date = models.DateField(null=True, blank=True, verbose_name="Дата Рождения")
+    profile_avatar = models.ImageField(null=True, blank=True, upload_to='media/avatar', default='media/avatar/default_img.png',verbose_name="Аватар Профиля")
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
@@ -30,8 +30,8 @@ class Articles(models.Model):
 
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор Статьи', blank=True, null=True)
     objects = models.Manager()
-    title = models.CharField(max_length=120)
-    post = models.TextField()
+    title = models.CharField(max_length=120, verbose_name="Заголовок")
+    post = models.TextField(verbose_name="Текст статьи")
     date = models.DateTimeField(auto_now=True)
     image_p = models.ImageField(null=True, blank=True, upload_to='media/articles', verbose_name="Картинка")
 
