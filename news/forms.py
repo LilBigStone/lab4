@@ -40,6 +40,8 @@ class AuthUserForm(AuthenticationForm, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for i in self.fields:
+            self.fields['username'].label = 'Имя пользователя'
+            self.fields['password'].label = 'Пароль'
             self.fields[i].widget.attrs['class'] = 'form-control'
 
 
