@@ -1,6 +1,6 @@
 asgiref==3.2.7
 coverage==5.0.4
-Django==3.0.5
+Django==3.0.7
 django-appconf==1.0.4
 django-avatar==5.0.0
 image==1.5.31
