@@ -1,7 +1,7 @@
 {% extends "mainApp/wrapper.html" %}
 
 {% block content %}
-
+<title>Создание тега</title>
 <form action="{% url 'tag_create' %}" method="post">
     {% csrf_token %}
     {{ form.tittle }}
