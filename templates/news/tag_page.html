@@ -1,0 +1,42 @@
+{% extends "mainApp/wrapper.html" %}
+
+
+
+{% block content %}
+
+{% if request.user.id == 1  %}
+
+<div class="container">
+    <div class="row justify-content-center" >
+        <div class="col-md-4"><h2>Список тегов</h2></div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center" >
+        <div class="col-md-4"><a href="{% url 'tag_create' %}"><h3>Создать</h3></a></div>
+    </div>
+</div>
+
+{% for tag in tags %}
+
+<div class="container">
+    <div class="row justify-content-center" >
+        <div class="col-md-3"><a href="{{tag.get_absolute_url}}"><h3>{{tag.tittle}}</h3></a></div>
+        <div class="col-md-3"><a class="btn btn-primary" href="{% url 'tag_update' slug=tag.slug %}">Редактировать</a></div>
+        <div class="col-md-3"><a class="btn btn-danger" href="{% url 'tag_delete' slug=tag.slug %}">Удалить</a></div>
+    </div>
+</div>
+
+{% endfor %}
+
+
+{% else %}
+<div class="container">
+    <div class="row justify-content-center" >
+        <h2>Изменять список тегов может только Админ</h2>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

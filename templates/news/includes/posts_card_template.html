@@ -1,0 +1,34 @@
+ <hr>
+
+        {% if not forloop.counter|divisibleby:"2" %}
+       <div class="col-3"></div>
+        {% endif %}
+
+        <div class="col-md-3">
+
+            <a href="/news/{{i.id}}"><h5 style="color: #023a54">{{i.title}}</h5></a>
+            {% if i.tags.all %}
+                <h6>теги:
+                        {% for tag in i.tags.all %}
+                            <a style="color: #5a6268" href="{{tag.get_absolute_url}}">{{tag.tittle}}, </a>
+                        {% endfor %}
+
+
+                </h6>
+            {% endif %}
+                <h6 style="color: #5a6268">{{i.date|date:"d-m-Y"}}</h6>
+                {% if i.image_p %}
+                    <img src="{{MEDIA_URL}}{{i.image_p.url}}" class="img-thumbnail" height="200" width="300"  >
+                {% endif %}
+        <p></p>
+            <div class="btn" style="background-color: #53859b;"><a href="/news/{{i.id}}" style="color: #fefefe">Читать дальше></a></div>
+            <hr>
+        </div>
+
+
+        {% if forloop.counter|divisibleby:"2" %}
+       <div class="col-3"></div>
+        {% endif %}
+
+
+
