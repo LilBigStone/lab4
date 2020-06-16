@@ -3,6 +3,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
+from django.template.defaultfilters import slugify as django_slugify
 
 
 class Profile(models.Model):
@@ -34,9 +36,42 @@ class Articles(models.Model):
     post = models.TextField(verbose_name="Текст статьи")
     date = models.DateTimeField(auto_now=True)
     image_p = models.ImageField(null=True, blank=True, upload_to='media/articles', verbose_name="Картинка")
+    tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
 
     def __str__(self):
         return self.title
+
+
+alphabet = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i',
+            'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
+            'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ы': 'i', 'э': 'e', 'ю': 'yu',
+            'я': 'ya', ' ': '_'}
+
+
+def slugify(s):
+    s = s.lower()
+    return django_slugify(''.join(alphabet.get(w, w) for w in s))
+
+
+class Tag(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор Статьи', blank=True, null=True)
+    tittle = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=50, unique=True)
+    objects = models.Manager()
+
+    def get_absolute_url(self):
+        return reverse('tag_detail', kwargs={'slug': self.slug})
+
+    def get_update_url(self):
+        return reverse('tag_update', kwargs={'slug': self.slug})
+
+    def __str__(self):
+        return '{}'.format(self.tittle)
+
+    def save(self, *args, **kwargs):
+        self.author_id = 1
+        self.slug = slugify(self.tittle)
+        super(Tag, self).save(*args, **kwargs)
 
 
 class Comments(models.Model):
@@ -45,3 +80,5 @@ class Comments(models.Model):
     create_date = models.DateTimeField(auto_now=True)
     text = models.TextField(verbose_name='Текст комментария')
     status = models.BooleanField(verbose_name='Видимость статьи', default=False)
+
+

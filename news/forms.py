@@ -1,6 +1,7 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import Textarea
-from .models import Articles, Comments, Profile
+from .models import Articles, Comments, Profile, Tag
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 
@@ -8,7 +9,12 @@ from django.contrib.auth.models import User
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Articles
-        fields = ('title', 'post', 'image_p', )
+        fields = ('title', 'post', 'image_p', 'tags')
+
+    # tags = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices={'class': 'form-control'})
+    widgets = {
+        'tags': forms.CheckboxSelectMultiple(attrs={'class': 'form-control'}),
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -31,7 +37,8 @@ class CommentForm(forms.ModelForm):
 class AuthUserForm(AuthenticationForm, forms.ModelForm):
     class Meta:
         model = User
-        fields = ('username', 'password')
+        fields = ('username', 'password',)
+
         labels = {
             'username': "Имя пользователя",
             'password': "Пароль",
@@ -99,4 +106,24 @@ class ProfileForm(forms.ModelForm):
             super().__init__(*args, **kwargs)
             for i in self.fields:
                 self.fields[i].widget.attrs['class'] = 'form-control'
+
+
+class TagForm(forms.ModelForm):
+
+    class Meta:
+        model = Tag
+        fields = ['tittle']
+        widgets = {
+            'tittle': forms.TextInput(attrs={'class': 'form-control'}),
+            'slug': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+        def clean_slug(self):
+            new_slug = self.cleaned_data['tittle'].lower()
+            if new_slug == 'create':
+                raise ValidationError('Slug не может быть создан')
+            if Tag.objects.filter(slug__iexact=new_slug).count():
+                raise ValidationError('Slug должен быть уникальным. "{}" уже существует'.format(new_slug))
+            return new_slug
+
 
