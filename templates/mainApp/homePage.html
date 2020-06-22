@@ -2,16 +2,21 @@
 
 {% block content %}
 <title>Главная</title>
-<div class="container">
-    <div class="d-md-block">
-        <h3 class="blue" style="background-color: #5385bb; padding: 10px">
-            <a
-                    href="/news" class="btn btn-primary btn-lg "
-                    style="background: #5385bb; border-color: #5385bb"
-                    title="Рыбалка в Беларуси весной | Рыбалка в Беларуси летом | Рыбалка в Беларуси осенью | Рыбалка в Беларуси зимой">Рыбалка в Беларуси
-            </a>
-
-        </h3>
-    </div>
-</div>
+    <!-- Masthead-->
+        <header class="masthead bg-primary text-white text-center">
+            <div class="container d-flex align-items-center flex-column">
+                <!-- Masthead Avatar Image-->
+                <img class="masthead-avatar mb-5" src="/media/media/avatar/fishing.jpg" alt="" />
+                <!-- Masthead Heading-->
+                <h2 class="masthead-heading text-uppercase mb-0">Делитесь вашими рассказами </h2>
+                <!-- Icon Divider-->
+                <div class="divider-custom divider-light">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+                <!-- Masthead Subheading-->
+                <p class="masthead-subheading font-weight-light mb-0">Карась  - Пиво - Рыбалка</p>
+            </div>
+        </header>
 {% endblock %}

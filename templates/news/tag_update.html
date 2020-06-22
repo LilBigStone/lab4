@@ -3,11 +3,14 @@
 
 {% block content %}
 <title>Обновление тега</title>
-<form action="{{ tag.get_update_url }}" method="post">
-    {% csrf_token %}
-    {{ form.tittle }}
-    <button type="submit" class="btn btn-primary">Изменить тег</button>
-</form>
+<div class="container">
+
+    <form action="{{ tag.get_update_url }}" method="post">
+        {% csrf_token %}
+        {{ form.tittle }}
+        <button type="submit" class="btn btn-primary">Изменить тег</button>
+    </form>
+</div>
 
 {% endblock %}
 

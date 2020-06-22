@@ -23,10 +23,10 @@
     <ul>
     {% for i in get_article.comments_articles.all %}
 
-    <li>
+    <li style="alignment: left">
         {{i.create_date}}<br>
         <img src="{{MEDIA_URL}}{{i.author.profile.profile_avatar.url}}" height="40" width="40">
-        <a href="/news/profile_page/{{i.author.profile.id}}/">{{i.author}}</a><br><br>
+        <a class="btn btn-info" href="/news/profile_page/{{i.author.profile.id}}/">{{i.author}}</a><br><br>
 
         {{i.text}}
     </li>
@@ -42,9 +42,9 @@
                 {{i}}
             {% endfor %}
         </div>
-        {% endif %}
+    {% endif %}
 
-    {% if request.user.is_authenticated %}
+    {% if request.user.is_authenticated and request.user.profile.verified %}
     <div class="col-4">
         <p>Добавить комментарий</p>
             <form action=""  id="add_form" method="post">
@@ -56,7 +56,7 @@
 
     </div>
         {% else %}
-    <p>Комментарии могут оставить только зарегистрированные пользователи</p>
+    <p>Комментарии могут оставить только зарегистрированные и подтвержденные пользователи</p>
      {% endif %}
 </div>
 {% endblock %}
