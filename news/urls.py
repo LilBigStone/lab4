@@ -9,7 +9,7 @@ from . import views
 
 urlpatterns = [
     # path('', ListView.as_view(queryset=Articles.objects.all().order_by("-date")[:20], template_name="news/post.html",), name='news_page'),
-    path('', views.HomeListView.as_view(),name='news_page'),
+    path('', views.HomeListView.as_view(), name='news_page'),
     path('<int:pk>/', views.HomeDetailView.as_view(), name='detail_page'),
     path('edit-page/', views.ArticleCreateView.as_view(), name='edit_page'),
     path('update-page/<int:pk>/', views.ArticleUpdateView.as_view(), name='update_page'),
@@ -24,5 +24,6 @@ urlpatterns = [
     path('tag/create', views.TagCreate.as_view(), name='tag_create'),
     path('tag/<str:slug>/update/', views.TagUpdate.as_view(), name='tag_update'),
     path('tag/<str:slug>/delete/', views.TagDelete.as_view(), name='tag_delete'),
+    path('<token>/verify/', views.verify, name='verify'),
 
 ]

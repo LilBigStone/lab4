@@ -5,7 +5,9 @@ from django.db import transaction
 from django.db.models import Model
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import never_cache
 
 from .models import Articles, Profile, Tag
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -15,6 +17,13 @@ from django.urls import reverse, reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
+from multiprocessing import Process
+from django.core.mail import send_mail
+import datetime
+import logging
+
+info_logger = logging.getLogger('authentication_logger')
+warning_logger = logging.getLogger('account_logger')
 
 
 class CustomSuccessMessageMixin:
@@ -142,6 +151,7 @@ class FishingLoginView(LoginView):
     success_url = reverse_lazy('edit_page')
 
     def get_success_url(self):
+        info_logger.info(f'{self.request.user.username} LogIn his account.')
         return self.success_url
 
 
@@ -150,7 +160,7 @@ class FishingRegisterView(CreateView):
     template_name = 'news/register.html'
     form_class = RegisterUserForm
     success_url = reverse_lazy('edit_page')
-    success_msg = 'Успешная регистрация'
+    success_msg = 'Успешная регистрация, проверьте почту на неё пришло письмо с подтверждением'
 
     def form_valid(self, form):
         form_valid = super().form_valid(form)
@@ -158,10 +168,20 @@ class FishingRegisterView(CreateView):
         password = form.cleaned_data["password"]
         aut_user = authenticate(username=username, password=password)
         login(self.request, aut_user)
+        verify_letter(self.request)
+        info_logger.info(f'{self.request.user.username} Register new account.')
         return form_valid
 
 
 class FishingLogoutView(LogoutView):
+
+    @method_decorator(never_cache)
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            info_logger.info(f'{self.request.user.username} LogOut his account.')
+            self.first_name = request.user.first_name
+        return super().dispatch(request, *args, **kwargs)
+
     next_page = 'news_page'
 
 
@@ -249,3 +269,26 @@ class TagDelete(View):
         tag = Tag.objects.get(slug__iexact=slug)
         tag.delete()
         return redirect(reverse('tags_page'))
+
+
+def verify(request, token):
+    request.user.profile.verified = True
+    info_logger.info(f'{request.user.username} Verified account.')
+    request.user.save()
+    return redirect('news_page')
+
+
+def verify_letter(request):
+    VERIFY_URL = (f'http://127.0.0.1:8000/news/{request.user.profile.verified_token}/verify/')
+    date = datetime.datetime.now()
+    proc = Process(target=send_mail(
+        'Письмо подтверждения',
+        f'Здравствуйте уважаемый(ая), {request.user.username}! Пожалуйста, перейдите по ссыке, для подтверждения своего аккаунта: {VERIFY_URL}. '
+        f'Дата отправки письма: {date}',
+        'lilstone1337@gmail.com',
+        [f'{request.user.email}'],
+        fail_silently=False
+    )
+    )
+    proc.start()
+    proc.join()
