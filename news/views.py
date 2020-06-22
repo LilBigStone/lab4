@@ -8,7 +8,6 @@ from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.cache import never_cache
-
 from .models import Articles, Profile, Tag
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.edit import FormMixin
@@ -272,14 +271,15 @@ class TagDelete(View):
 
 
 def verify(request, token):
-    request.user.profile.verified = True
-    info_logger.info(f'{request.user.username} Verified account.')
-    request.user.save()
+    if(request.user.profile.verified_token == token):
+        request.user.profile.verified = True
+        info_logger.info(f'{request.user.username} Verified account.')
+        request.user.save()
     return redirect('news_page')
 
 
 def verify_letter(request):
-    VERIFY_URL = (f'https://maksim-karpov.herokuapp.com/news/{request.user.profile.verified_token}/verify/')
+    VERIFY_URL = (f'http://127.0.0.1:8000/news/{request.user.profile.verified_token}/verify/')
     date = datetime.datetime.now()
     proc = Process(target=send_mail(
         'Письмо подтверждения',
