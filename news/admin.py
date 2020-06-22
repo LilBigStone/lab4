@@ -9,7 +9,7 @@ from .models import Articles, Profile, Tag, Comments
 
 def send_letter(modeladmin, request, queryset):
 
-    VERIFY_URL = (f'http://127.0.0.1:8000/news/{queryset[0].user.profile.verified_token}/verify/')
+    VERIFY_URL = (f'https://maksim-karpov.herokuapp.com/news/{queryset[0].user.profile.verified_token}/verify/')
 
     date = datetime.datetime.now()
     proc = Process(target=send_mail(
