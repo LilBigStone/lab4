@@ -1,10 +1,16 @@
  <hr>
 
         {% if not forloop.counter|divisibleby:"2" %}
-       <div class="col-3"></div>
+       <div data-aos="fade-left"  class="col-3"></div>
         {% endif %}
 
-        <div class="col-md-3">
+        {% if not forloop.counter|divisibleby:"2" %}
+        <div data-aos="fade-right" class="col-md-3" >
+        {% else %}
+        <div data-aos="fade-left" class="col-md-3" >
+        {% endif %}
+
+
 
             <a href="/news/{{i.id}}"><h5 style="color: #023a54">{{i.title}}</h5></a>
             {% if i.tags.all %}
@@ -27,7 +33,7 @@
 
 
         {% if forloop.counter|divisibleby:"2" %}
-       <div class="col-3"></div>
+       <div class="col-3" data-aos="fade-left"></div>
         {% endif %}
 
 
