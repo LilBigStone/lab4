@@ -13,18 +13,18 @@
 
 <body>
 <div class="container">
-        <h2>{{ get_profile.user.get_full_name }}</h2>
+        <h2 data-aos="fade-down" >{{ get_profile.user.get_full_name }}</h2>
         {% if request.user.profile.id == get_profile.user.profile.id %}
-        <h3><a class="btn btn-light" href="/news/edit/">изменить профиль</a></h3>
+        <h3 data-aos="fade-down" ><a class="btn btn-light" href="/news/edit/">изменить профиль</a></h3>
         {% endif %}
         <div class="row">
             <div class="col-md-4">
 
     {% if get_profile.user.profile.profile_avatar %}
-          <img src="{{MEDIA_URL}}{{get_profile.user.profile.profile_avatar.url}}" height="300" width="300">
+          <img data-aos="fade-right" src="{{MEDIA_URL}}{{get_profile.user.profile.profile_avatar.url}}" class="img-thumbnail" height="300" width="300">
     {% endif %}
             </div>
-            <div class="col-md-6">
+            <div data-aos="fade-left" class="col-md-6">
         <ul>
           <li>Имя Пользователя: {{ get_profile.user.username }}</li>
           <li>Статус: {{ get_profile.user.profile.bio }}</li>

@@ -17,6 +17,7 @@
                 <h6>теги:
                         {% for tag in i.tags.all %}
                             <a style="color: #5a6268" href="{{tag.get_absolute_url}}">{{tag.tittle}}, </a>
+
                         {% endfor %}
 
 

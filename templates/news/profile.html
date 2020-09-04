@@ -3,11 +3,11 @@
 {% block content %}
 <title>Редактирование профиля</title>
 <div>
-  <form method="post" enctype="multipart/form-data" >
+  <form data-aos="fade-right" method="post" enctype="multipart/form-data" >
     {% csrf_token %}
     {{ user_form.as_p }}
     {{ profile_form.as_p }}
-    <button class="btn btn-light" type="submit">Save changes</button>
+    <button class="btn btn-light" type="submit">Сохранить</button>
   </form>
 </div>
 {% endblock %}

@@ -3,19 +3,23 @@
 {% block content %}
 <title>{{get_article.title}}</title>
 
-<div class="container">
-        <h2 class="text-info">{{get_article.title}}</h2>
-        <h5 >Теги:
-        {% for tag in get_article.tags.all %}
-            <a style="color: #5a6268" href="{{tag.get_absolute_url}}">{{tag.tittle}}, </a>
-        {% endfor %}
-        </h5>
-        <h6 class="text-info">Опубликовано: {{get_article.date|date:"Y-m-d в H:i:s"}}</h6>
-        <p>{{get_article.post|safe|linebreaks}}</p>
-    {% if get_article.image_p %}
-        <p></p>
-        <img src="{{MEDIA_URL}}{{get_article.image_p.url}}" class="img-fluid" width="600" height="auto">
-    {% endif %}
+<div data-aos="fade-right" style="text-align: left" class="container ">
+
+    <div data-aos="fade-down-right" class="p-3 mb-2" style="background: #09607c; border-radius: 15px">
+            <h2 class="text-light" >{{get_article.title}}</h2>
+            <h5 >Теги:
+            {% for tag in get_article.tags.all %}
+                <a style="color: #5a6268" href="{{tag.get_absolute_url}}">{{tag.tittle}}, </a>
+            {% endfor %}
+            </h5>
+            <h6 class="text-info">Опубликовано: {{get_article.date|date:"Y-m-d в H:i:s"}}</h6>
+            <p>{{get_article.post|safe|linebreaks}}</p>
+        {% if get_article.image_p %}
+            <p></p>
+            <img src="{{MEDIA_URL}}{{get_article.image_p.url}}" class="img-thumbnail" width="600" height="auto">
+        {% endif %}
+    </div>
+
         <p>Комментарии {{get_article.comments_articles.all.count}}</p>
 
         <hr>
@@ -23,7 +27,11 @@
     <ul>
     {% for i in get_article.comments_articles.all %}
 
-    <li style="alignment: left">
+        {% if not forloop.counter|divisibleby:"2" %}
+    <li data-aos="fade-left" style="alignment: left">
+        {% else %}
+    <li data-aos="fade-right" style="alignment: left">
+        {% endif %}
         {{i.create_date}}<br>
         <img src="{{MEDIA_URL}}{{i.author.profile.profile_avatar.url}}" height="40" width="40">
         <a class="btn btn-info" href="/news/profile_page/{{i.author.profile.id}}/">{{i.author}}</a><br><br>
@@ -37,7 +45,7 @@
 
 
     {% if messages %}
-        <div class="alert alert-success">
+        <div class="alert alert-success "  data-aos="fade-right">
             {% for i in messages %}
                 {{i}}
             {% endfor %}
@@ -45,14 +53,14 @@
     {% endif %}
 
     {% if request.user.is_authenticated and request.user.profile.verified %}
-    <div class="col-4">
+    <div class="col-4" data-aos="fade-up">
         <p>Добавить комментарий</p>
             <form action=""  id="add_form" method="post">
                 {% csrf_token %}
                 {{form.as_p}}
             </form>
 
-            <button form="add_form" type="submit" class="btn btn-primary">Добавить</button>
+            <button form="add_form" type="submit" class="btn btn-secondary">Добавить</button>
 
     </div>
         {% else %}
