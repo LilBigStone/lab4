@@ -288,7 +288,7 @@ def make_token(request):
 def verify_letter(request):
     request.user.profile.verified_token = make_token(request)
     request.user.save()
-    VERIFY_URL = (f'http://127.0.0.1:8000/news/{request.user.profile.verified_token}/verify/')
+    VERIFY_URL = (f'https://maksim-karpov.herokuapp.com/news/{request.user.profile.verified_token}/verify/')
     date = datetime.datetime.now()
     proc = Process(target=send_mail(
         'Письмо подтверждения',
