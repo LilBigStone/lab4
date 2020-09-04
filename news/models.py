@@ -4,19 +4,17 @@ from string import ascii_uppercase
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
+from django.db.models import ImageField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.template.defaultfilters import slugify as django_slugify
 
+
+
 User._meta.get_field('email')._unique = True
 User._meta.get_field('email').blank = False
 User._meta.get_field('email').null = False
-
-
-def make_token():
-    token = ''.join(choice(ascii_uppercase) for i in range(10))
-    return token
 
 
 class Profile(models.Model):
@@ -26,7 +24,7 @@ class Profile(models.Model):
     birth_date = models.DateField(null=True, blank=True, verbose_name="Дата Рождения")
     profile_avatar = models.ImageField(null=True, blank=True, upload_to='media/avatar', default='media/avatar/default_img.png',verbose_name="Аватар Профиля")
     verified = models.BooleanField(default=False)
-    verified_token = models.CharField(default=make_token(), max_length=10)
+    verified_token = models.TextField(default='')
 
 
     @receiver(post_save, sender=User)
@@ -43,9 +41,10 @@ class Profile(models.Model):
         instance.profile.save()
 
 
-class Articles(models.Model):
 
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор Статьи', blank=True, null=True)
+
+class Articles(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор Статьи', blank=True, null=True,)
     objects = models.Manager()
     title = models.CharField(max_length=120, verbose_name="Заголовок")
     post = models.TextField(verbose_name="Текст статьи")

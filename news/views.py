@@ -20,6 +20,7 @@ from multiprocessing import Process
 from django.core.mail import send_mail
 import datetime
 import logging
+import six
 
 info_logger = logging.getLogger('authentication_logger')
 warning_logger = logging.getLogger('account_logger')
@@ -271,6 +272,7 @@ class TagDelete(View):
 
 
 def verify(request, token):
+
     if(request.user.profile.verified_token == token):
         request.user.profile.verified = True
         info_logger.info(f'{request.user.username} Verified account.')
@@ -278,8 +280,15 @@ def verify(request, token):
     return redirect('news_page')
 
 
+def make_token(request):
+    token = six.text_type(datetime.datetime.now()) + six.text_type(request.user.email) + six.text_type(request.user.username)
+    return token
+
+
 def verify_letter(request):
-    VERIFY_URL = (f'https://maksim-karpov.herokuapp.com/news/{request.user.profile.verified_token}/verify/')
+    request.user.profile.verified_token = make_token(request)
+    request.user.save()
+    VERIFY_URL = (f'http://127.0.0.1:8000/news/{request.user.profile.verified_token}/verify/')
     date = datetime.datetime.now()
     proc = Process(target=send_mail(
         'Письмо подтверждения',
