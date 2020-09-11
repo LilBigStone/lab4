@@ -11,10 +11,16 @@ class ArticleForm(forms.ModelForm):
         model = Articles
         fields = ('title', 'post', 'image_p', 'tags')
 
-    # tags = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices={'class': 'form-control'})
-    widgets = {
-        'tags': forms.CheckboxSelectMultiple(attrs={'class': 'form-control'}),
-    }
+        labels = {
+             'title': "Заголовок",
+             'post': "Текст статьи",
+             'image_p': "Изображение",
+             'tags': "Добавить теги",
+        }
+
+        # widgets = {
+        #     'tags': forms.CheckboxSelectMultiple(attrs={'class': 'form-control', 'size': 40}),
+        # }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -5,10 +5,11 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.views import LogoutView
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
-    # path('', ListView.as_view(queryset=Articles.objects.all().order_by("-date")[:20], template_name="news/post.html",), name='news_page'),
     path('', views.HomeListView.as_view(), name='news_page'),
     path('<int:pk>/', views.HomeDetailView.as_view(), name='detail_page'),
     path('edit-page/', views.ArticleCreateView.as_view(), name='edit_page'),
@@ -27,3 +28,7 @@ urlpatterns = [
     path('<token>/verify/', views.verify, name='verify'),
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)

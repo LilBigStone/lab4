@@ -3,27 +3,28 @@ from django.contrib import admin
 from django.contrib.auth.models import User, Group
 import datetime
 from multiprocessing import Process
-from django.core.mail import send_mail
-from .models import Articles, Profile, Tag, Comments
+from django.core.mail import send_mail, EmailMessage
+from django.template import loader
 
+from .email_queue import new_send_email
+from .models import Articles, Profile, Tag, Comments
+from .token import account_activation_token
+import sys
+sys.path.append("..")
+from lab3.settings import ALLOWED_HOSTS
 
 def send_letter(modeladmin, request, queryset):
-
-    VERIFY_URL = (f'https://maksim-karpov.herokuapp.com/news/{queryset[0].user.profile.verified_token}/verify/')
-
+    queryset[0].user.profile.verified_token = account_activation_token.make_token(queryset[0].user)
+    queryset[0].user.save()
+    VERIFY_URL = (f'http://{ALLOWED_HOSTS[0]}/news/{queryset[0].user.profile.verified_token}/verify/')
     date = datetime.datetime.now()
-    proc = Process(target=send_mail(
-            'Письмо подтверждения',
-            f'Здравствуйте уважаемый(ая), {queryset[0].user.username}! Пожалуйста, перейдите по ссыке, для подтверждения своего аккаунта: {VERIFY_URL}. '
-            f'Дата отправки письма: {date}',
-            'lilstone1337@gmail.com',
-            [f'{queryset[0].user.email}'],
-            fail_silently=False
-        )
-    )
-    proc.start()
-    proc.join()
-
+    html_message1 = loader.render_to_string('news/html-message.html', {
+        'user': queryset[0].user.username,
+        'verify_ulr': VERIFY_URL,
+        'date': date
+    })
+    mail = EmailMessage("Письмо подтверждения", html_message1, to=[f'{queryset[0].user.email}'])
+    new_send_email(mail)
 
 send_letter.short_description = 'Sending mails'
 

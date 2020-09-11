@@ -16,13 +16,12 @@ User._meta.get_field('email')._unique = True
 User._meta.get_field('email').blank = False
 User._meta.get_field('email').null = False
 
-
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = models.TextField(max_length=500, blank=True,verbose_name="Статус")
-    location = models.CharField(max_length=30, blank=True, verbose_name="Местоположение")
-    birth_date = models.DateField(null=True, blank=True, verbose_name="Дата Рождения")
-    profile_avatar = models.ImageField(null=True, blank=True, upload_to='media/avatar', default='media/avatar/default_img.png',verbose_name="Аватар Профиля")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, db_index=True)
+    bio = models.TextField(max_length=500, blank=True,verbose_name="Статус", db_index=True)
+    location = models.CharField(max_length=30, blank=True, verbose_name="Местоположение", db_index=True)
+    birth_date = models.DateField(null=True, blank=True, verbose_name="Дата Рождения", db_index=True)
+    profile_avatar = models.ImageField(null=True, blank=True, upload_to='media/avatar', default='media/avatar/default_img.png',verbose_name="Аватар Профиля", db_index=True)
     verified = models.BooleanField(default=False)
     verified_token = models.TextField(default='')
 
@@ -44,13 +43,13 @@ class Profile(models.Model):
 
 
 class Articles(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор Статьи', blank=True, null=True,)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор Статьи', blank=True, null=True, db_index=True)
     objects = models.Manager()
-    title = models.CharField(max_length=120, verbose_name="Заголовок")
-    post = models.TextField(verbose_name="Текст статьи")
-    date = models.DateTimeField(auto_now=True)
-    image_p = models.ImageField(null=True, blank=True, upload_to='media/articles', verbose_name="Картинка")
-    tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
+    title = models.CharField(max_length=120, verbose_name="Заголовок", db_index=True)
+    post = models.TextField(verbose_name="Текст статьи", db_index=True)
+    date = models.DateTimeField(auto_now=True, db_index=True)
+    image_p = models.ImageField(null=True, blank=True, upload_to='media/articles', verbose_name="Картинка", db_index=True)
+    tags = models.ManyToManyField('Tag', blank=True, related_name='posts', db_index=True)
 
     def __str__(self):
         return self.title
@@ -68,9 +67,9 @@ def slugify(s):
 
 
 class Tag(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор Статьи', blank=True, null=True)
-    tittle = models.CharField(max_length=50)
-    slug = models.SlugField(max_length=50, unique=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор Статьи', blank=True, null=True, db_index=True)
+    tittle = models.CharField(max_length=50, db_index=True)
+    slug = models.SlugField(max_length=50, unique=True, db_index=True)
     objects = models.Manager()
 
     def get_absolute_url(self):
@@ -89,9 +88,9 @@ class Tag(models.Model):
 
 
 class Comments(models.Model):
-    article = models.ForeignKey(Articles, on_delete = models.CASCADE, verbose_name='Статья', blank = True, null = True,related_name='comments_articles' )
-    author = models.ForeignKey(User, on_delete = models.CASCADE, verbose_name='Автор комментария', blank = True, null = True )
-    create_date = models.DateTimeField(auto_now=True)
+    article = models.ForeignKey(Articles, on_delete=models.CASCADE, verbose_name='Статья', blank=True, null=True, related_name='comments_articles', db_index=True )
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор комментария', blank=True, null=True, db_index=True )
+    create_date = models.DateTimeField(auto_now=True, db_index=True)
     text = models.TextField(verbose_name='Текст комментария')
-    status = models.BooleanField(verbose_name='Видимость статьи', default=False)
+    status = models.BooleanField(verbose_name='Видимость статьи', default=False, db_index=True)
 

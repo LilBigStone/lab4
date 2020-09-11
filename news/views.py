@@ -2,8 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db.models import Model
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -16,11 +15,15 @@ from django.urls import reverse, reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
-from multiprocessing import Process
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+from .email_queue import new_send_email
+from .token import account_activation_token
+import sys
+sys.path.append("..")
+from lab3.settings import ALLOWED_HOSTS
 import datetime
 import logging
-import six
+from django.template import loader
 
 info_logger = logging.getLogger('authentication_logger')
 warning_logger = logging.getLogger('account_logger')
@@ -40,6 +43,9 @@ class CustomSuccessMessageMixin:
 
 
 class HomeListView(ListView):
+    # user = User.objects.create_user(username='testingUsasdfer1', password='password', email='1asdf@mail.ru')
+    # profile = Profile.objects.create(user=user, bio='StatusForTest', location='NCountry',
+    #                                  birth_date=datetime.date(2000, 11, 12), verified=False)
     model = Articles
     template_name = 'news/post.html'
     context_object_name = 'list_articles'
@@ -82,7 +88,7 @@ class HomeDetailView(CustomSuccessMessageMixin, FormMixin, DetailView):
 
 
 def post(self, request, *args, **kwargs):
-    # form = self.get_form()
+
     form = ArticleForm(request.POST, request.FILES)
     if form.is_valid():
         return self.form_valid(form)
@@ -272,32 +278,34 @@ class TagDelete(View):
 
 
 def verify(request, token):
-
-    if(request.user.profile.verified_token == token):
-        request.user.profile.verified = True
-        info_logger.info(f'{request.user.username} Verified account.')
-        request.user.save()
+    user = User.objects.get(profile__verified_token=token)
+    if(user.profile.verified==True):
+        return redirect('news_page')
+    if (account_activation_token.check_token(user, token)):
+        user.profile.verified = True
+        info_logger.info(f'{user.username} Verified account.')
+        user.save()
     return redirect('news_page')
 
 
-def make_token(request):
-    token = six.text_type(datetime.datetime.now()) + six.text_type(request.user.email) + six.text_type(request.user.username)
-    return token
-
 
 def verify_letter(request):
-    request.user.profile.verified_token = make_token(request)
+    request.user.profile.verified_token = account_activation_token.make_token(request.user)
     request.user.save()
-    VERIFY_URL = (f'https://maksim-karpov.herokuapp.com/news/{request.user.profile.verified_token}/verify/')
+    VERIFY_URL = (f'http://{ALLOWED_HOSTS[0]}/news/{request.user.profile.verified_token}/verify/')
     date = datetime.datetime.now()
-    proc = Process(target=send_mail(
-        'Письмо подтверждения',
-        f'Здравствуйте уважаемый(ая), {request.user.username}! Пожалуйста, перейдите по ссыке, для подтверждения своего аккаунта: {VERIFY_URL}. '
-        f'Дата отправки письма: {date}',
-        'lilstone1337@gmail.com',
-        [f'{request.user.email}'],
-        fail_silently=False
-    )
-    )
-    proc.start()
-    proc.join()
+    html_message1 = loader.render_to_string('news/html-message.html', {
+        'user': request.user.username,
+        'verify_ulr': VERIFY_URL,
+        'date': date
+    })
+    mail = EmailMessage("Письмо подтверждения", html_message1, to=[f'{request.user.email}'])
+    new_send_email(mail)
+
+
+def custom_handler404(request, exception):
+    return render(request, 'news/404.html', status=404)
+
+
+def custom_handler500(request):
+    return render(request, 'news/500.html', status=500)
