@@ -20,7 +20,6 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -32,7 +31,7 @@ SECRET_KEY = 'a96@0=+omc!xmt4t)pf^5kuuu__+kb)mhy0t$!dvwi8w)_xiwj'
 DEBUG = False
 
 # ALLOWED_HOSTS = ["maksim-karpov.herokuapp.com", '127.0.0.1']
-ALLOWED_HOSTS = ["maksim-karpov.herokuapp.com"]
+ALLOWED_HOSTS = ['127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'avatar',
-
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -84,18 +83,23 @@ WSGI_APPLICATION = 'lab3.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'pjpswbnp',
+#         'USER': 'pjpswbnp',
+#         'PASSWORD': 'BM_t6Qaye7c1Y9SaTsxGa94EFMvuzMm7',
+#         'HOST': 'rogue.db.elephantsql.com',
+#         'PORT': '5432'
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pjpswbnp',
-        'USER': 'pjpswbnp',
-        'PASSWORD': 'BM_t6Qaye7c1Y9SaTsxGa94EFMvuzMm7',
-        'HOST': 'rogue.db.elephantsql.com',
-        'PORT': '5432'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
-
 
 
 # Password validation
@@ -204,3 +208,12 @@ LOGGING = {
         }
     },
 }
+
+AWS_ACCESS_KEY_ID = 'AKIA3KU57RRLNXUMGK62'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'maksimka-s3'
+
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
