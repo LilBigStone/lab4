@@ -26,7 +26,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 SECRET_KEY = 'a96@0=+omc!xmt4t)pf^5kuuu__+kb)mhy0t$!dvwi8w)_xiwj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["maksim-karpov.herokuapp.com","127.0.0.1"]
 
@@ -167,7 +167,7 @@ LOGGING = {
         'warning_file': {
             'level': 'WARNING',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/authentication_logger.log',
+            'filename': 'logs/warning_logger.log',
             'formatter': 'tiny',
         },
         'debug_file': {
