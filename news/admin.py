@@ -14,17 +14,18 @@ sys.path.append("..")
 from lab3.settings import ALLOWED_HOSTS
 
 def send_letter(modeladmin, request, queryset):
-    queryset[0].user.profile.verified_token = account_activation_token.make_token(queryset[0].user)
-    queryset[0].user.save()
-    VERIFY_URL = (f'http://{ALLOWED_HOSTS[0]}/news/{queryset[0].user.profile.verified_token}/verify/')
-    date = datetime.datetime.now()
-    html_message1 = loader.render_to_string('news/html-message.html', {
-        'user': queryset[0].user.username,
-        'verify_ulr': VERIFY_URL,
-        'date': date
-    })
-    mail = EmailMessage("Письмо подтверждения", html_message1, to=[f'{queryset[0].user.email}'])
-    new_send_email(mail)
+    for q in queryset:
+        q.user.profile.verified_token = account_activation_token.make_token(q.user)
+        q.user.save()
+        VERIFY_URL = (f'http://{ALLOWED_HOSTS[0]}/news/{q.user.profile.verified_token}/verify/')
+        date = datetime.datetime.now()
+        html_message1 = loader.render_to_string('news/html-message.html', {
+            'user': q.user.username,
+            'verify_ulr': VERIFY_URL,
+            'date': date
+        })
+        mail = EmailMessage("Письмо подтверждения", html_message1, to=[f'{q.user.email}'])
+        new_send_email(mail)
 
 send_letter.short_description = 'Sending mails'
 
