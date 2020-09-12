@@ -20,7 +20,7 @@ from .email_queue import new_send_email
 from .token import account_activation_token
 import sys
 sys.path.append("..")
-from lab3.settings import ALLOWED_HOSTS
+# from lab3.settings import ALLOWED_HOSTS
 import datetime
 import logging
 from django.template import loader
@@ -292,7 +292,7 @@ def verify(request, token):
 def verify_letter(request):
     request.user.profile.verified_token = account_activation_token.make_token(request.user)
     request.user.save()
-    VERIFY_URL = (f'http://{ALLOWED_HOSTS[0]}/news/{request.user.profile.verified_token}/verify/')
+    VERIFY_URL = (f'http://127.0.0.1:8000/news/{request.user.profile.verified_token}/verify/')
     date = datetime.datetime.now()
     html_message1 = loader.render_to_string('news/html-message.html', {
         'user': request.user.username,

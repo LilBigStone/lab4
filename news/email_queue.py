@@ -1,5 +1,5 @@
 from multiprocessing.dummy import Manager, Process
-
+from .models import models
 IS_ACTIVE = False
 
 def process_sent_queue(queue):
@@ -14,4 +14,5 @@ def new_send_email(email):
         process = Process(target=process_sent_queue, args=(new_send_email.queue,))
         process.daemon = True
         process.start()
+        models.IS_ACTIVE = True
     new_send_email.queue.put(email)
