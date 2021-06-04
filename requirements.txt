@@ -7,7 +7,7 @@ botocore==1.17.56
 colorama==0.4.3
 coverage==5.2.1
 distlib==0.3.1
-Django==3.1
+Django==3.1.9
 django-appconf==1.0.4
 django-avatar==5.0.0
 django-storages==1.10
